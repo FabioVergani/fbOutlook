@@ -99,8 +99,8 @@ height:1px;
 			<label>
 				di sesso:
 				<select id="field_gender" name="gender">
-					<option value="female" selected="selected">Femminile</option>
-					<option value="male">Maschile</option>
+					<option value="woman" selected="selected">Femminile</option>
+					<option value="man">Maschile</option>
 				</select>
 			</label>
 			<label>
@@ -112,7 +112,7 @@ height:1px;
 			</label>
 			<label>
 				di <b>nome</b>:
-				<input type="text" id="name" name="name" autocomplete autofocus>
+				<input type="text" id="field_name" name="name" autocomplete autofocus>
 			</label>
 		</fieldset>
 		<fieldset>
@@ -156,7 +156,13 @@ height:1px;
 	<script>
 		var d=document,
 		$id=d.getElementById.bind(d),
+		$form=$id('form'),
 		$invio=$id('invio'),
+		$gender=$id('field_gender'),
+		$whoare=$id('field_whoare'),
+		$name=$id('field_name'),
+		$lives=$id('field_lives'),
+		$city=$id('field_city'),
 		$age=$id('field_age'),
 		$yearbirth=$id('field_yearbirth'),
 		yearcurrent=new Date().getFullYear(),
@@ -174,8 +180,9 @@ height:1px;
 		 });
 		}
 
-		$age.placeholder=18;
-		$yearbirth.placeholder=yearcurrent-18;
+		$age.placeholder=$age.value=18;
+		$yearbirth.placeholder=$yearbirth.value=yearcurrent-18;
+
 
 		$age.onkeyup=$age.onchange=$age.onpaste=function(evt){
 			var e=evt.target,btn=$invio;
@@ -208,6 +215,21 @@ height:1px;
 				btn.enabled=true;
 			},400);
 		};
+
+
+$form.addEventListener('submit',function(evt){
+	evt.preventDefault();
+
+	var A=$age.value,B=$city.value,C=$name.value,query=$gender.value+' who are '+$whoare.value+(A?(' and age '+A):'')+(C?(' and are named "'+C+'" '):'')+(B?(' and live '+$lives.value+' '+B):'');
+
+	console.log(query)
+	return false;
+},true);
+
+
+
+
+
 
 
 	</script>
