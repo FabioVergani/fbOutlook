@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+ <html lang="en">
+ <head>
+	<meta charset="utf-8">
+	<title>Cerca su Facebook</title>
+<!--
+	<link rel="stylesheet" href=".css">
+-->
+	<style>
+
+html{font-family:sans-serif;}
+body{max-width:360px; margin:0 auto;}
+h1{font-size:24px;padding:0 16px;color:#444290;}
+form{font-size:12px;color:#565656;padding:0 6px;text-align:left;}
+form b{color:#000;font-size:12px;}
+fieldset{margin:0;padding:0 12px 6px 12px;border:1px solid #eee;}
+legend{border:0;padding:0 4px;font-size:11px;color:#B3B3B3;}
+label{display:block;margin:.5em 0 .2em;}
+
+#anagrafica label,input{display:inline-block;}
+
+#field_age{width:40px;}
+#field_yearbirth{width:60px;}
+
+input{
+border:1px solid #ccc;
+box-shadow:inset 0 1px 3px #ddd;
+border-radius:4px;
+vertical-align:middle;
+box-sizing:border-box;
+font-family:sans-serif;
+font-weight:100;
+letter-spacing:0.01em;
+line-height:normal;
+margin:5px auto 2px auto;
+padding:1px 0px;
+word-spacing:normal;
+text-transform:none;
+text-indent:4px;
+text-shadow:none;
+cursor:auto;
+width:100%;
+}
+
+button{
+font-size:100%;
+padding:.5em 1em;
+border:0 rgba(0,0,0,0);
+text-decoration:none;
+border-radius:2px;
+background-color:#0078e7;
+color:#fff;
+display:block;
+zoom:1;
+line-height:normal;
+white-space:nowrap;
+vertical-align:middle;
+text-align:center;
+cursor:pointer;
+user-select:none;
+box-sizing:border-box;
+font-family:sans-serif;
+font-weight:100;
+letter-spacing:0.01em;
+margin:6px 2px;font-weight:500;
+}
+
+.disabled input{
+pointer-events:none;
+-webkit-user-select:none;
+user-select:none;
+cursor:default;
+background:#DCDCDC !important;
+color:#9491A0;
+}
+
+.pac-logo:after {
+background-image:none !important;
+background-color:#bbb;
+height:1px;
+}
+
+
+
+	</style>
+
+ </head>
+ <body>
+
+	<h1>
+	 Cerca su Facebook una&hellip;
+	</h1>
+
+	<form id="form" action="#">
+		<fieldset>
+			<legend>
+			 Persona
+			</legend>
+			<label>
+				di sesso:
+				<select id="field_gender" name="gender">
+					<option value="woman" selected="selected">Femminile</option>
+					<option value="man">Maschile</option>
+				</select>
+			</label>
+			<label>
+				Che &egrave;:
+				<select id="field_whoare" name="whoare">
+					<option value="not my friends" selected="selected">sconosciuta</option>
+					<option value="my friends">gi&agrave; mia amica</option>
+				</select>
+			</label>
+			<label>
+				di <b>nome</b>:
+				<input type="text" id="field_name" name="name" autocomplete autofocus>
+			</label>
+		</fieldset>
+		<fieldset>
+			<legend>
+			 Area:
+			</legend>
+			<label>
+				e vive:
+				<select id="field_lives" name="lives">
+					<option value="near" selected="selected">vicino a</option>
+					<option value="in">in</option>
+				</select>
+			</label>
+			<label>
+				questa <b>citt&agrave;</b>:
+				<input type="text" id="field_city" name="city" placeholder="nome citt&agrave;">
+			</label>
+			<p class="disabled">
+				<input id="field_locality">
+				<input id="field_administrative_area_level_1">
+				<input id="field_postal_code">
+				<input id="field_country">
+			</p>
+		</fieldset>
+		<fieldset>
+			<legend>
+			 Et&agrave;
+			</legend>
+				<span id="anagrafica">
+					<label>
+						di anni:
+						<input type="number" id="field_age" name="age" maxlength="2" placeholder="DD" >
+					</label>
+					<input type="number" id="field_yearbirth" name="yearbirth" maxlength="4" placeholder="YYYY">
+			</span>
+		</fieldset>
+		<button id="invio" type="submit">INVIA</button>
+	</form>
+
+
+	<script>
+		var d=document,
+		$id=d.getElementById.bind(d),
+		$form=$id('form'),
+		$invio=$id('invio'),
+		$gender=$id('field_gender'),
+		$whoare=$id('field_whoare'),
+		$name=$id('field_name'),
+		$lives=$id('field_lives'),
+		$city=$id('field_locality'),
+		$age=$id('field_age'),
+		$yearbirth=$id('field_yearbirth'),
+		yearcurrent=new Date().getFullYear(),
+		yearbirth_TimeOut=null,
+		age_TimeOut=null;
+
+		function cityA(){
+		 var $=$id,h={locality:'long',administrative_area_level_1:'short',country:'long',postal_code:'short'},
+		 e=new google.maps.places.Autocomplete(($('field_city')),{types: ['geocode']});
+		 for(var p in h){$('field_'+p).disabled=true;};
+		 e.addListener('place_changed',function(){
+			var g=h;
+			for(var p in g){$('field_'+p).value='';};
+			for(var m=g,o,n,i=0,c=e.getPlace().address_components,j=c.length>>>0;i<j;i++){o=c[i];n=o.types[0];if(n in m){$('field_'+n).value=o[m[n]+'_name'];}};
+		 });
+		}
+
+		$age.placeholder=$age.value=18;
+		$yearbirth.placeholder=$yearbirth.value=yearcurrent-18;
+
+
+		$age.onkeyup=$age.onchange=$age.onpaste=function(evt){
+			var e=evt.target,btn=$invio;
+			btn.enabled=false;
+			clearTimeout(age_TimeOut);
+			age_TimeOut=setTimeout(function(){
+				var b=$age.value,c=yearcurrent;
+				if(99>b){
+					c=(yearcurrent-e.value);
+				}else{
+					$age.value=0;
+				};
+				$yearbirth.value=c;
+				btn.enabled=true;
+			},400);
+		};
+
+		$yearbirth.onkeyup=$yearbirth.onchange=$yearbirth.onpaste=function(evt){
+			var e=evt.target,btn=$invio;
+			btn.enabled=false;
+			clearTimeout(yearbirth_TimeOut);
+			yearbirth_TimeOut=setTimeout(function(){
+				var a=yearcurrent,b=$yearbirth.value,c=0;
+				if(a>b){
+					c=a-b;
+				}else{
+					$yearbirth.value=a;
+				};
+				$age.value=c;
+				btn.enabled=true;
+			},400);
+		};
+
+
+		$form.addEventListener('submit',function(evt){
+			evt.preventDefault();
+			var A=$age.value,B=$city.value,C=$name.value,query=$gender.value+' who are '+$whoare.value+(A?(' and age '+A):'')+(C?(' and are named "'+C+'" '):'')+(B?(' and live '+$lives.value+' '+B):'');
+			(window.open("https://www.facebook.com/search/top/?q="+encodeURI(query))).focus();
+			//console.log(query)
+			return false;
+		},true);
+
+
+
+	</script>
+	<script src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=cityA" async defer></script>
+</body>
+</html>
