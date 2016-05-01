@@ -162,7 +162,7 @@ height:1px;
 		$whoare=$id('field_whoare'),
 		$name=$id('field_name'),
 		$lives=$id('field_lives'),
-		$city=$id('field_city'),
+		$city=$id('field_locality'),
 		$age=$id('field_age'),
 		$yearbirth=$id('field_yearbirth'),
 		yearcurrent=new Date().getFullYear(),
@@ -217,18 +217,13 @@ height:1px;
 		};
 
 
-$form.addEventListener('submit',function(evt){
-	evt.preventDefault();
-
-	var A=$age.value,B=$city.value,C=$name.value,query=$gender.value+' who are '+$whoare.value+(A?(' and age '+A):'')+(C?(' and are named "'+C+'" '):'')+(B?(' and live '+$lives.value+' '+B):'');
-
-	console.log(query)
-	return false;
-},true);
-
-
-
-
+		$form.addEventListener('submit',function(evt){
+			evt.preventDefault();
+			var A=$age.value,B=$city.value,C=$name.value,query=$gender.value+' who are '+$whoare.value+(A?(' and age '+A):'')+(C?(' and are named "'+C+'" '):'')+(B?(' and live '+$lives.value+' '+B):'');
+			(window.open("https://www.facebook.com/search/top/?q="+encodeURI(query))).focus();
+			//console.log(query)
+			return false;
+		},true);
 
 
 
