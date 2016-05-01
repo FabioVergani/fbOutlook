@@ -17,8 +17,12 @@ fieldset{margin:0;padding:0 12px 6px 12px;border:1px solid #eee;}
 legend{border:0;padding:0 4px;font-size:11px;color:#B3B3B3;}
 label{display:block;margin:.5em 0 .2em;}
 
+#anagrafica label,input{display:inline-block;}
+
+#field_age{width:40px;}
+#field_yearbirth{width:60px;}
+
 input{
-display:inline-block;
 border:1px solid #ccc;
 box-shadow:inset 0 1px 3px #ddd;
 border-radius:4px;
@@ -63,33 +67,22 @@ margin:6px 2px;font-weight:500;
 
 .disabled input{
 pointer-events:none;
-user-select: none;
-background: #DCDCDC;
-color: #9491A0;
+-webkit-user-select:none;
+user-select:none;
+cursor:default;
+background:#DCDCDC !important;
+color:#9491A0;
+}
+
+.pac-logo:after {
+background-image:none !important;
+background-color:#bbb;
+height:1px;
 }
 
 
 
-
 	</style>
-
-
-	<script>
-		function cityA(){
-		 var e=document,$id=e.getElementById.bind(e),h={locality:'long',administrative_area_level_1:'short',country:'long',postal_code:'short'};
-		 e=new google.maps.places.Autocomplete(($id('field_city')),{types: ['geocode']});
-		 e.addListener('place_changed',function(){
-			var g=h,f=$id;
-			for(var p in g){f('field_'+p).value='';};
-			for(var m=g,o,n,$=f,i=0,c=e.getPlace().address_components,j=c.length>>>0;i<j;i++){o=c[i];n=o.types[0];if(n in m){$('field_'+n).value=o[m[n]+'_name'];}};
-		 });
-		}
-	</script>
-	<script src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=cityA" async defer></script>
-
-
-
-
 
  </head>
  <body>
@@ -99,7 +92,6 @@ color: #9491A0;
 	</h1>
 
 	<form id="form" action="#">
-
 		<fieldset>
 			<legend>
 			 Persona
@@ -120,10 +112,9 @@ color: #9491A0;
 			</label>
 			<label>
 				di <b>nome</b>:
-				<input type="text" id="name" name="name">
+				<input type="text" id="name" name="name" autocomplete autofocus>
 			</label>
 		</fieldset>
-
 		<fieldset>
 			<legend>
 			 Area:
@@ -146,29 +137,80 @@ color: #9491A0;
 				<input id="field_country">
 			</p>
 		</fieldset>
-
-
-
-
-
-
 		<fieldset>
 			<legend>
 			 Et&agrave;
 			</legend>
-			<label>
-				di anni:
-				<input type="text" id="field_age" name="age" maxlength="2" placeholder="18">
-			</label>
-			<label>
-				(nata nell&apos;anno)
-				<input type="text" id="field_yearbirth" name="yearbirth" maxlength="4" placeholder="YYYY">
-			</label>
+				<span id="anagrafica">
+					<label>
+						di anni:
+						<input type="number" id="field_age" name="age" maxlength="2" placeholder="DD" >
+					</label>
+					<input type="number" id="field_yearbirth" name="yearbirth" maxlength="4" placeholder="YYYY">
+			</span>
 		</fieldset>
-
-		<button type="submit">INVIA</button>
-
+		<button id="invio" type="submit">INVIA</button>
 	</form>
 
+
+	<script>
+		var d=document,
+		$id=d.getElementById.bind(d),
+		$invio=$id('invio'),
+		$age=$id('field_age'),
+		$yearbirth=$id('field_yearbirth'),
+		yearcurrent=new Date().getFullYear(),
+		yearbirth_TimeOut=null,
+		age_TimeOut=null;
+
+		function cityA(){
+		 var $=$id,h={locality:'long',administrative_area_level_1:'short',country:'long',postal_code:'short'},
+		 e=new google.maps.places.Autocomplete(($('field_city')),{types: ['geocode']});
+		 for(var p in h){$('field_'+p).disabled=true;};
+		 e.addListener('place_changed',function(){
+			var g=h;
+			for(var p in g){$('field_'+p).value='';};
+			for(var m=g,o,n,i=0,c=e.getPlace().address_components,j=c.length>>>0;i<j;i++){o=c[i];n=o.types[0];if(n in m){$('field_'+n).value=o[m[n]+'_name'];}};
+		 });
+		}
+
+		$age.placeholder=18;
+		$yearbirth.placeholder=yearcurrent-18;
+
+		$age.onkeyup=$age.onchange=$age.onpaste=function(evt){
+			var e=evt.target,btn=$invio;
+			btn.enabled=false;
+			clearTimeout(age_TimeOut);
+			age_TimeOut=setTimeout(function(){
+				var b=$age.value,c=yearcurrent;
+				if(99>b){
+					c=(yearcurrent-e.value);
+				}else{
+					$age.value=0;
+				};
+				$yearbirth.value=c;
+				btn.enabled=true;
+			},400);
+		};
+
+		$yearbirth.onkeyup=$yearbirth.onchange=$yearbirth.onpaste=function(evt){
+			var e=evt.target,btn=$invio;
+			btn.enabled=false;
+			clearTimeout(yearbirth_TimeOut);
+			yearbirth_TimeOut=setTimeout(function(){
+				var a=yearcurrent,b=$yearbirth.value,c=0;
+				if(a>b){
+					c=a-b;
+				}else{
+					$yearbirth.value=a;
+				};
+				$age.value=c;
+				btn.enabled=true;
+			},400);
+		};
+
+
+	</script>
+	<script src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=cityA" async defer></script>
 </body>
 </html>
