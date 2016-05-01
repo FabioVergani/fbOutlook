@@ -2,56 +2,171 @@
  <html lang="en">
  <head>
 	<meta charset="utf-8">
-	<title>-</title>
-	<style>label{display:block;}</style>
+	<title>Cerca su Facebook</title>
+<!--
+	<link rel="stylesheet" href=".css">
+-->
+	<style>
+
+html{font-family:sans-serif;}
+body{max-width:360px; margin:0 auto;}
+h1{font-size:24px;padding:0 16px;color:#444290;}
+form{font-size:12px;color:#565656;padding:0 6px;text-align:left;}
+form b{color:#000;font-size:12px;}
+fieldset{margin:0;padding:0 12px 6px 12px;border:1px solid #eee;}
+legend{border:0;padding:0 4px;font-size:11px;color:#B3B3B3;}
+label{display:block;margin:.5em 0 .2em;}
+
+input{
+display:inline-block;
+border:1px solid #ccc;
+box-shadow:inset 0 1px 3px #ddd;
+border-radius:4px;
+vertical-align:middle;
+box-sizing:border-box;
+font-family:sans-serif;
+font-weight:100;
+letter-spacing:0.01em;
+line-height:normal;
+margin:5px auto 2px auto;
+padding:1px 0px;
+word-spacing:normal;
+text-transform:none;
+text-indent:4px;
+text-shadow:none;
+cursor:auto;
+width:100%;
+}
+
+button{
+font-size:100%;
+padding:.5em 1em;
+border:0 rgba(0,0,0,0);
+text-decoration:none;
+border-radius:2px;
+background-color:#0078e7;
+color:#fff;
+display:block;
+zoom:1;
+line-height:normal;
+white-space:nowrap;
+vertical-align:middle;
+text-align:center;
+cursor:pointer;
+user-select:none;
+box-sizing:border-box;
+font-family:sans-serif;
+font-weight:100;
+letter-spacing:0.01em;
+margin:6px 2px;font-weight:500;
+}
+
+.disabled input{
+pointer-events:none;
+user-select: none;
+background: #DCDCDC;
+color: #9491A0;
+}
+
+
+
+
+	</style>
+
+
+	<script>
+		function cityA(){
+		 var e=document,$id=e.getElementById.bind(e),h={locality:'long',administrative_area_level_1:'short',country:'long',postal_code:'short'};
+		 e=new google.maps.places.Autocomplete(($id('field_city')),{types: ['geocode']});
+		 e.addListener('place_changed',function(){
+			var g=h,f=$id;
+			for(var p in g){f('field_'+p).value='';};
+			for(var m=g,o,n,$=f,i=0,c=e.getPlace().address_components,j=c.length>>>0;i<j;i++){o=c[i];n=o.types[0];if(n in m){$('field_'+n).value=o[m[n]+'_name'];}};
+		 });
+		}
+	</script>
+	<script src="https://maps.googleapis.com/maps/api/js?libraries=places&callback=cityA" async defer></script>
+
+
+
+
+
  </head>
  <body>
 
-	<header>
-	 -
-	</header>
+	<h1>
+	 Cerca su Facebook una&hellip;
+	</h1>
 
 	<form id="form" action="#">
 
-		<label>
-			* Persona di sesso:
-			<select id="gender" name="gender">
-				<option value="female" selected="selected">Femminile</option>
-				<option value="male">Maschile</option>
-			</select>
-		</label>
+		<fieldset>
+			<legend>
+			 Persona
+			</legend>
+			<label>
+				di sesso:
+				<select id="field_gender" name="gender">
+					<option value="female" selected="selected">Femminile</option>
+					<option value="male">Maschile</option>
+				</select>
+			</label>
+			<label>
+				Che &egrave;:
+				<select id="field_whoare" name="whoare">
+					<option value="not my friends" selected="selected">sconosciuta</option>
+					<option value="my friends">gi&agrave; mia amica</option>
+				</select>
+			</label>
+			<label>
+				di <b>nome</b>:
+				<input type="text" id="name" name="name">
+			</label>
+		</fieldset>
 
-		<label>
-			* Che è:
-			<select id="whoare" name="whoare">
-				<option value="not my friends" selected="selected">sconosciuta</option>
-				<option value="my friends">gi&agrave; mia amica</option>
-			</select>
-		</label>
+		<fieldset>
+			<legend>
+			 Area:
+			</legend>
+			<label>
+				e vive:
+				<select id="field_lives" name="lives">
+					<option value="near" selected="selected">vicino a</option>
+					<option value="in">in</option>
+				</select>
+			</label>
+			<label>
+				questa <b>citt&agrave;</b>:
+				<input type="text" id="field_city" name="city" placeholder="nome citt&agrave;">
+			</label>
+			<p class="disabled">
+				<input id="field_locality">
+				<input id="field_administrative_area_level_1">
+				<input id="field_postal_code">
+				<input id="field_country">
+			</p>
+		</fieldset>
 
-		<label>
-			di nome:
-			<input type="text" id="name" name="name">
-		</label>
 
-		<label>
-			* e vive:
-			<select id="lives" name="lives">
-				<option value="near" selected="selected">vicino a</option>
-				<option value="in">in</option>
-			</select>
-			<input type="text" id="city" name="city" placeholder="nome citt&agrave;">
-		</label>
 
-		<label>
-			di anni:
-			<input type="text" id="age" name="age" maxlength="2" placeholder="18">
-		</label>
 
-		<label>
-			(nata nell&apos;anno)
-			<input type="text" id="yearofbirth" name="yearofbirth" maxlength="4" placeholder="YYYY">
-		</label>
+
+
+		<fieldset>
+			<legend>
+			 Et&agrave;
+			</legend>
+			<label>
+				di anni:
+				<input type="text" id="field_age" name="age" maxlength="2" placeholder="18">
+			</label>
+			<label>
+				(nata nell&apos;anno)
+				<input type="text" id="field_yearbirth" name="yearbirth" maxlength="4" placeholder="YYYY">
+			</label>
+		</fieldset>
+
+		<button type="submit">INVIA</button>
 
 	</form>
 
